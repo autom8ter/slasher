@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"github.com/autom8ter/slasher"
 	"github.com/nlopes/slack"
+	"github.com/pkg/errors"
 	"net/http"
 	"os"
 )
@@ -11,9 +12,14 @@ import (
 
 func helloWorld() slasher.HandlerFunc{
 	return func(s *slasher.Slasher, client *slack.Client, command *slack.SlashCommand) (i interface{}, err error) {
+		script := `echo "hello world!"`
+		output, err := s.ShellScript(script)
+		if err != nil {
+			return nil,  errors.Wrapf(err, "failed to run script: %s", script)
+		}
 		return &slack.Message{
 			Msg: slack.Msg{
-				Text: "Hello World!",
+				Text: string(output),
 			},
 		}, nil
 	}
