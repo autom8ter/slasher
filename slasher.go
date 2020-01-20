@@ -7,7 +7,6 @@ import (
 	"fmt"
 
 	"github.com/nlopes/slack"
-	"github.com/thoas/go-funk"
 
 	"io"
 	"net/http"
@@ -26,11 +25,10 @@ type Slasher struct {
 }
 
 //Creates a newe slasher instance
-func NewSlasher(token string, allowedUsers []string) *Slasher {
+func NewSlasher(token string) *Slasher {
 	return &Slasher{
-		client:       slack.New(token),
-		functions:    make(map[string]HandlerFunc),
-		allowedUsers: allowedUsers,
+		client:    slack.New(token),
+		functions: make(map[string]HandlerFunc),
 	}
 }
 
@@ -91,14 +89,6 @@ func (s *Slasher) HandlerFunc() http.HandlerFunc {
 		slash, err := slack.SlashCommandParse(r)
 		if err != nil {
 			s.Error(w, err)
-		}
-		if !funk.ContainsString(s.allowedUsers, slash.UserName) {
-			msg := &slack.Message{
-				Msg: slack.Msg{
-					Text: fmt.Sprintf(":feelsbadman: %s is not authorized to use slasher! :wink:", slash.UserName),
-				},
-			}
-			s.JSON(w, msg)
 		}
 		for command, function := range s.functions {
 			if command == slash.Command {
