@@ -5,12 +5,14 @@ package slasher
 import (
 	"encoding/json"
 	"fmt"
+
 	"github.com/nlopes/slack"
+	"github.com/thoas/go-funk"
+
 	"io"
 	"net/http"
 	"os"
 	"os/exec"
-	"strings"
 )
 
 //A handler func is run against an incoming slack slash command. It is up to the user of this library to define their own handlers
@@ -90,7 +92,7 @@ func (s *Slasher) HandlerFunc() http.HandlerFunc {
 		if err != nil {
 			s.Error(w, err)
 		}
-		if !strings.Contains(strings.Join(s.allowedUsers, " "), slash.UserName) {
+		if !funk.ContainsString(s.allowedUsers, slash.UserName) {
 			msg := &slack.Message{
 				Msg: slack.Msg{
 					Text: fmt.Sprintf(":feelsbadman: %s is not authorized to use slasher! :wink:", slash.UserName),
