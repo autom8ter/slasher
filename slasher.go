@@ -6,6 +6,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/nlopes/slack"
+	"io"
 	"net/http"
 	"os"
 	"os/exec"
@@ -65,6 +66,16 @@ func (s *Slasher) JSON(w http.ResponseWriter, obj interface{}) {
 		s.Error(w, err)
 	}
 	_, err = w.Write(bits)
+	if err != nil {
+		s.Error(w, err)
+	}
+	w.WriteHeader(http.StatusOK)
+	return
+}
+
+//Writes the string to the response
+func (s *Slasher) String(w http.ResponseWriter, response string) {
+	_, err := io.WriteString(w, response)
 	if err != nil {
 		s.Error(w, err)
 	}

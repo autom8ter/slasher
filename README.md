@@ -99,3 +99,10 @@ runs exec.Command("python3", "-c", cmd)
 func (s *Slasher) ShellScript(script string) ([]byte, error)
 ```
 exec.Command("/bin/sh", "-c", script)
+
+#### func (*Slasher) String
+
+```go
+func (s *Slasher) String(w http.ResponseWriter, response string)
+```
+Writes the string to the response
