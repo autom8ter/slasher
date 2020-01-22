@@ -4,6 +4,7 @@ list:
 	@grep '^[^#[:space:]].*:' Makefile | grep -v ':=' | grep -v '^\.' | sed 's/:.*//g' | sed 's/://g' | sort
 
 patch:
+	go generate
 	bumpversion patch --allow-dirty
 
 tag:

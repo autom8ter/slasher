@@ -51,6 +51,13 @@ func (s *Slasher) BashScipt(script string) ([]byte, error)
 ```
 runs exec.Command("/bin/sh", "-c", script)
 
+#### func (*Slasher) CommandHandlers
+
+```go
+func (s *Slasher) CommandHandlers() []string
+```
+Names of all supported slash commands
+
 #### func (*Slasher) DeleteHandler
 
 ```go
