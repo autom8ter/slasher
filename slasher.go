@@ -5,6 +5,7 @@ package slasher
 import (
 	"encoding/json"
 	"fmt"
+	"strings"
 
 	"github.com/nlopes/slack"
 
@@ -46,6 +47,15 @@ func (s *Slasher) Exists(command string) bool {
 //Deletes a handler delete(s.functions, command)
 func (s *Slasher) DeleteHandler(command string) {
 	delete(s.functions, command)
+}
+
+//Names of all supported slash commands
+func (s *Slasher) CommandHandlers() []string {
+	commands := []string{}
+	for cmd, _ := range s.functions {
+		commands = append(commands, cmd)
+	}
+	return commands
 }
 
 //Writes a wrapped Slasher error to the response
@@ -97,9 +107,12 @@ func (s *Slasher) HandlerFunc() http.HandlerFunc {
 					s.Error(w, err)
 				}
 				s.JSON(w, obj)
+				return
 			}
 		}
-		http.Error(w, fmt.Sprintf(":feelsbadman: slash handler %s not found", slash.Command), http.StatusNotFound)
+		s.JSON(w, slack.Msg{
+			Text: fmt.Sprintf("❌️ Command: %s not found! Supported Commands: %s", slash.Command, strings.Join(s.CommandHandlers(), ",")),
+		})
 		return
 	}
 }
